@@ -10,7 +10,7 @@ import {
   LogOut,
   ChevronDown,
 } from "lucide-react";
-import { useAuth } from "@/providers/AuthProvider copy";
+import { useAuth } from "@/providers/AuthProvider";
 import { iniciais } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { useState } from "react";

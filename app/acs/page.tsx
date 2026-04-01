@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth } from "@/providers/AuthProvider copy";
+import { useAuth } from "@/providers/AuthProvider";
 import { useMeusAtendimentos, useAtendimentos } from "@/hooks/useAtendimentos";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { AtendimentoCard } from "@/components/chat/AtendimentoCard";

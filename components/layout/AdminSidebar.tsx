@@ -14,7 +14,7 @@ import {
   ChevronDown,
   ShieldCheck,
 } from "lucide-react";
-import { useAuth } from "@/providers/AuthProvider copy";
+import { useAuth } from "@/providers/AuthProvider";
 import { iniciais, cn } from "@/lib/utils";
 import { useState } from "react";
 

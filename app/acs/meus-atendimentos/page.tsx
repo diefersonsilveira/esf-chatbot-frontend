@@ -2,7 +2,7 @@
 
 import { useMeusAtendimentos } from "@/hooks/useAtendimentos";
 import { AtendimentoCard } from "@/components/chat/AtendimentoCard";
-import { useAuth } from "@/providers/AuthProvider copy";
+import { useAuth } from "@/providers/AuthProvider";
 import { MessageSquare } from "lucide-react";
 
 export default function MeusAtendimentosPage() {

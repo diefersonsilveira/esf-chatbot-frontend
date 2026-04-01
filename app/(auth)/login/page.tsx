@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useAuth } from "@/providers/AuthProvider copy";
+import { useAuth } from "@/providers/AuthProvider";
 import { Heart, AlertCircle, Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {

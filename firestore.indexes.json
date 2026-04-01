@@ -1,0 +1,111 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "atendimentos_abertos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "aberto",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "ultima_mensagem_em",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "atendimentos_abertos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "aberto",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "ultima_mensagem_em",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "atendimentos_abertos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "ultima_mensagem_em",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "atendimentos_abertos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "assignedTo",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "aberto",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "ultima_mensagem_em",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "mensagens",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "atendimento_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "criado_em",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "observacoes",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "atendimento_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "criado_em",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "logs_eventos",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "tipo",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "data_hora",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

@@ -1,0 +1,114 @@
+// ═══════════════════════════════════════════════════════════════════════════════
+// REGRAS DE SEGURANÇA DO FIRESTORE — ESF Chatbot Panel
+// ═══════════════════════════════════════════════════════════════════════════════
+//
+// CORREÇÃO S2: sem este arquivo, qualquer pessoa com o projectId e a apiKey
+// (visíveis no bundle JS público) consegue acessar e modificar todos os dados
+// do Firestore diretamente via SDK cliente.
+//
+// Modelo de segurança:
+//   - O backend (chatbot Node.js) usa firebase-admin SDK — ignora estas regras.
+//   - Os Route Handlers do Next.js usam firebase-admin SDK — ignoram estas regras.
+//   - O cliente (browser/React) usa firebase SDK — OBEDECE estas regras.
+//
+// O cliente precisa de acesso direto (via onSnapshot) a:
+//   - atendimentos_abertos (leitura — para listeners realtime)
+//   - mensagens (leitura — para o chat em tempo real)
+//   - observacoes (leitura — para o painel lateral)
+//
+// Todas as escritas são feitas pelos Route Handlers server-side (firebase-admin).
+// O cliente NUNCA deve escrever diretamente no Firestore.
+// ═══════════════════════════════════════════════════════════════════════════════
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── Helpers ──────────────────────────────────────────────────────────────
+
+    // Verifica se o usuário está autenticado via Firebase Auth
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Verifica se o usuário existe e está ativo no painel
+    // NOTA: esta função faz uma leitura extra — use com parcimônia
+    function isPainelUserAtivo() {
+      return isAuthenticated() &&
+        exists(/databases/$(database)/documents/painel_usuarios/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/painel_usuarios/$(request.auth.uid)).data.ativo == true;
+    }
+
+    // Verifica se o usuário é admin
+    function isAdmin() {
+      return isPainelUserAtivo() &&
+        get(/databases/$(database)/documents/painel_usuarios/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // ─── painel_usuarios ──────────────────────────────────────────────────────
+    // Leitura: apenas o próprio usuário ou admin
+    // Escrita: apenas via server-side (firebase-admin nos Route Handlers)
+    match /painel_usuarios/{uid} {
+      allow read: if isAuthenticated() && (request.auth.uid == uid || isAdmin());
+      allow write: if false; // exclusivo do firebase-admin no servidor
+    }
+
+    // ─── atendimentos_abertos ─────────────────────────────────────────────────
+    // Leitura: qualquer usuário autenticado e ativo do painel (ACS ou admin)
+    // Escrita: apenas via server-side (firebase-admin)
+    match /atendimentos_abertos/{atendimentoId} {
+      allow read: if isPainelUserAtivo();
+      allow write: if false; // exclusivo do firebase-admin
+    }
+
+    // ─── mensagens ────────────────────────────────────────────────────────────
+    // Leitura: qualquer usuário ativo do painel
+    // Escrita: apenas via server-side
+    match /mensagens/{msgId} {
+      allow read: if isPainelUserAtivo();
+      allow write: if false;
+    }
+
+    // ─── observacoes ──────────────────────────────────────────────────────────
+    // Leitura: qualquer usuário ativo do painel
+    // Escrita: apenas via server-side (o Route Handler verifica autenticação)
+    match /observacoes/{obsId} {
+      allow read: if isPainelUserAtivo();
+      allow write: if false;
+    }
+
+    // ─── mensagens_pendentes ──────────────────────────────────────────────────
+    // Apenas o backend (firebase-admin) acessa — cliente nunca precisa disso
+    match /mensagens_pendentes/{id} {
+      allow read, write: if false;
+    }
+
+    // ─── usuarios (contatos do WhatsApp) ─────────────────────────────────────
+    // Apenas o backend acessa — o painel não consulta diretamente
+    match /usuarios/{uid} {
+      allow read: if isAdmin(); // Admin pode ver para diagnóstico
+      allow write: if false;
+    }
+
+    // ─── estado_conversas ─────────────────────────────────────────────────────
+    // Exclusivo do backend
+    match /estado_conversas/{uid} {
+      allow read, write: if false;
+    }
+
+    // ─── logs_eventos ─────────────────────────────────────────────────────────
+    // Leitura: apenas admin (para a página de logs)
+    // Escrita: apenas backend
+    match /logs_eventos/{logId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    // ─── Regra de bloqueio total por padrão ──────────────────────────────────
+    // Qualquer coleção não listada acima é bloqueada completamente
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -43,8 +43,8 @@ serviceAccount*.json
 # Vercel
 .vercel
 
-# Logs & debug
-logs/
+# Logs & debug (só na raiz — não ignorar app/admin/logs/)
+/logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
